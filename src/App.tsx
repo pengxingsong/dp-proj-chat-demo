@@ -232,7 +232,8 @@ const App: React.FC = () => {
           <Tabs
             defaultActiveKey="1"
             size="small"
-            tabBarStyle={{ height: '40px', margin: 0 }}
+            style={{ minWidth: 0 }}
+            tabBarGutter={8}
             items={[
               {
                 key: '1',
