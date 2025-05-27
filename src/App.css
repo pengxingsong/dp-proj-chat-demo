@@ -344,4 +344,18 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+.dragger {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background 0.2s;
+}
+.dragger:hover {
+  background: #e6f7ff;
 } 

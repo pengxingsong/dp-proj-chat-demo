@@ -15,6 +15,7 @@ import {
 import zhCN from 'antd/locale/zh_CN';
 import Chat from './components/Chat';
 import type { Message } from './types/chat';
+import FloatingCollapseButton from './components/FloatingCollapseButton';
 import './App.css';
 
 const { Sider, Content } = Layout;
@@ -30,10 +31,17 @@ interface SessionItem {
   source: string;
 }
 
+const MIN_SIDER_WIDTH = 250;
+const MAX_LEFT_SIDER_WIDTH = 350;
+const MIN_RIGHT_SIDER_WIDTH = 300;
+const MAX_RIGHT_SIDER_WIDTH = 550;
+
 const App: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [leftWidth, setLeftWidth] = useState(220);
+  const [rightWidth, setRightWidth] = useState(320);
 
   const mockSessions: SessionItem[] = [
     {
@@ -67,6 +75,61 @@ const App: React.FC = () => {
 
   const handleSendMessage = async (message: string): Promise<void> => {
     console.log('发送消息:', message);
+  };
+
+  // 拖拽左侧
+  const handleLeftDrag = (e: React.MouseEvent) => {
+    const startX = e.clientX;
+    const startWidth = leftWidth;
+    let animationFrameId: number | null = null;
+    document.body.style.userSelect = 'none';
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      if (animationFrameId) return;
+      animationFrameId = requestAnimationFrame(() => {
+        const newWidth = Math.max(MIN_SIDER_WIDTH, Math.min(MAX_LEFT_SIDER_WIDTH, startWidth + (moveEvent.clientX - startX)));
+        setLeftWidth(newWidth);
+        animationFrameId = null;
+      });
+    };
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      document.body.style.userSelect = '';
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  // 拖拽右侧
+  const handleRightDrag = (e: React.MouseEvent) => {
+    const startX = e.clientX;
+    const startWidth = rightWidth;
+    let animationFrameId: number | null = null;
+    document.body.style.userSelect = 'none';
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      if (animationFrameId) return;
+      animationFrameId = requestAnimationFrame(() => {
+        const delta = startX - moveEvent.clientX;
+        const newWidth = Math.max(MIN_RIGHT_SIDER_WIDTH, Math.min(MAX_RIGHT_SIDER_WIDTH, startWidth + delta));
+        setRightWidth(newWidth);
+        animationFrameId = null;
+      });
+    };
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      document.body.style.userSelect = '';
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   };
 
   const renderSessionItem = (item: SessionItem) => (
@@ -157,13 +220,14 @@ const App: React.FC = () => {
 
   return (
     <ConfigProvider locale={zhCN}>
-      <Layout className="app-container">
+      <Layout className="app-container" style={{ position: 'relative' }}>
         <Sider 
-          width={leftCollapsed ? 80 : 320} 
+          width={leftCollapsed ? 0 : leftWidth}
           className={`left-sider ${leftCollapsed ? 'collapsed' : ''}`}
           trigger={null}
           collapsible
           collapsed={leftCollapsed}
+          style={{ position: 'relative', zIndex: 2 }}
         >
           {!leftCollapsed && (
             <>
@@ -196,39 +260,32 @@ const App: React.FC = () => {
               </div>
             </>
           )}
-          {leftCollapsed && (
-            <div className="collapsed-menu">
-              <Button type="text" icon={<UserOutlined />} />
-              <Button type="text" icon={<CommentOutlined />} />
-              <Button type="text" icon={<AppstoreOutlined />} />
-            </div>
-          )}
-          <Button 
-            type="text"
-            className="collapse-trigger left-trigger"
-            onClick={() => setLeftCollapsed(!leftCollapsed)}
-            icon={leftCollapsed ? <RightOutlined /> : <LeftOutlined />}
-          />
         </Sider>
-        <Content className="chat-content">
-          <Chat 
-            initialMessages={initialMessages}
-            onSendMessage={handleSendMessage}
+        {/* 拖拽条（左侧） */}
+        {!leftCollapsed && (
+          <div
+            className="dragger"
+            style={{ left: leftWidth - 3, width: 6, cursor: 'ew-resize', position: 'absolute', top: 0, bottom: 0, zIndex: 10 }}
+            onMouseDown={handleLeftDrag}
           />
+        )}
+        {/* 浮窗折叠/展开按钮（左侧） */}
+        <FloatingCollapseButton
+          side="left"
+          collapsed={leftCollapsed}
+          onClick={() => setLeftCollapsed(!leftCollapsed)}
+        />
+        <Content className="main-content" style={{ position: 'relative' }}>
+          <Chat initialMessages={initialMessages} onSendMessage={handleSendMessage} />
         </Content>
-        <Sider 
-          width={rightCollapsed ? 0 : "35%"} 
+        <Sider
+          width={rightCollapsed ? 0 : rightWidth}
           className={`right-sider ${rightCollapsed ? 'collapsed' : ''}`}
           trigger={null}
           collapsible
           collapsed={rightCollapsed}
+          style={{ position: 'relative', zIndex: 2 }}
         >
-          <Button 
-            type="text"
-            className="collapse-trigger right-trigger"
-            onClick={() => setRightCollapsed(!rightCollapsed)}
-            icon={rightCollapsed ? <LeftOutlined /> : <RightOutlined />}
-          />
           <Tabs
             defaultActiveKey="1"
             size="small"
@@ -268,6 +325,20 @@ const App: React.FC = () => {
             ]}
           />
         </Sider>
+        {/* 拖拽条（右侧） */}
+        {!rightCollapsed && (
+          <div
+            className="dragger"
+            style={{ right: rightWidth - 3, width: 6, cursor: 'ew-resize', position: 'absolute', top: 0, bottom: 0, zIndex: 10 }}
+            onMouseDown={handleRightDrag}
+          />
+        )}
+        {/* 浮窗折叠/展开按钮（右侧） */}
+        <FloatingCollapseButton
+          side="right"
+          collapsed={rightCollapsed}
+          onClick={() => setRightCollapsed(!rightCollapsed)}
+        />
       </Layout>
     </ConfigProvider>
   );

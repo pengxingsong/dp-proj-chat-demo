@@ -1,0 +1,27 @@
+.floating-collapse-btn {
+  width: 32px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+  transition: box-shadow 0.2s, left 0.2s, right 0.2s;
+  font-size: 18px;
+  user-select: none;
+}
+.floating-collapse-btn.left {
+  border-radius: 0 6px 6px 0;
+  left: 0;
+}
+.floating-collapse-btn.right {
+  border-radius: 6px 0 0 6px;
+  right: 0;
+}
+.floating-collapse-btn:hover {
+  box-shadow: 0 4px 16px rgba(24,144,255,0.15);
+  background: #f5faff;
+  color: #1890ff;
+} 
