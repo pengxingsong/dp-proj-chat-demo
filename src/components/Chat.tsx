@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Input, Button, Avatar, Spin, Image } from 'antd';
-import { SendOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
+import { Input, Button, Avatar, Spin, Image, Upload, message as antdMessage, Row, Col } from 'antd';
+import { SendOutlined, UserOutlined, RobotOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import type { Message } from '../types/chat';
 import './Chat.css';
@@ -59,13 +59,14 @@ type CustomMessage = TextMessage | ImageMessage | FileMessage | VideoMessage | O
 
 interface ChatProps {
   initialMessages: CustomMessage[];
-  onSendMessage: (message: string) => Promise<void>;
+  onSendMessage: (message: string, files?: File[]) => Promise<void>;
 }
 
 const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
   const [messages, setMessages] = useState<CustomMessage[]>(initialMessages);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -95,7 +96,7 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
   }, [messages, scrollToBottom]);
 
   const handleSend = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() && pendingFiles.length === 0) return;
 
     const userMessage: TextMessage = {
       type: 'text',
@@ -109,7 +110,69 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
     setIsLoading(true);
 
     try {
-      await onSendMessage(inputValue);
+      await onSendMessage(inputValue, pendingFiles);
+      
+      // 处理文件消息
+      const fileMessages = pendingFiles.map(file => {
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        const url = URL.createObjectURL(file);
+        
+        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext!)) {
+          return {
+            type: 'image',
+            url,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as ImageMessage;
+        } else if (['mp3', 'wav', 'ogg'].includes(ext!)) {
+          return {
+            type: 'file',
+            fileType: 'mp3',
+            url,
+            fileName: file.name,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as FileMessage;
+        } else if (['pdf'].includes(ext!)) {
+          return {
+            type: 'file',
+            fileType: 'pdf',
+            url,
+            fileName: file.name,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as FileMessage;
+        } else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext!)) {
+          return {
+            type: 'office',
+            fileType: ext as any,
+            url,
+            fileName: file.name,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as OfficeMessage;
+        } else if (['mp4', 'webm', 'ogg'].includes(ext!)) {
+          return {
+            type: 'video',
+            url,
+            fileName: file.name,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as VideoMessage;
+        } else {
+          return {
+            type: 'file',
+            fileType: 'other',
+            url,
+            fileName: file.name,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'user',
+          } as FileMessage;
+        }
+      });
+
+      setMessages(prev => [...prev, ...fileMessages]);
+      setPendingFiles([]);
       
       // 模拟AI回复
       const aiMessage: TextMessage = {
@@ -134,6 +197,15 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleFileUpload = (file: File) => {
+    setPendingFiles(prev => [...prev, file]);
+    return false; // 阻止自动上传
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setPendingFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   // 消息类型小组件
@@ -285,22 +357,55 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
       </div>
 
       <div className="chat-input-container">
-        <Input.TextArea
-          ref={textAreaRef}
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="按 Enter 发送，Shift + Enter 换行"
-          autoSize={{ minRows: 2, maxRows: 6 }}
-        />
-        <Button
-          type="primary"
-          icon={<SendOutlined />}
-          onClick={handleSend}
-          disabled={!inputValue.trim() || isLoading}
-        >
-          发送
-        </Button>
+        <div className="input-area">
+          <Row gutter={8} align="middle">
+            <Col flex="auto">
+              <Input.TextArea
+                ref={textAreaRef}
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="按 Enter 发送，Shift + Enter 换行"
+                autoSize={{ minRows: 3, maxRows: 8 }}
+              />
+            </Col>
+            <Col>
+              <div className="action-buttons">
+                <Upload
+                  beforeUpload={handleFileUpload}
+                  showUploadList={false}
+                  multiple={true}
+                >
+                  <Button icon={<UploadOutlined />} block>上传</Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  icon={<SendOutlined />}
+                  onClick={handleSend}
+                  disabled={(!inputValue.trim() && pendingFiles.length === 0) || isLoading}
+                  block
+                >
+                  发送
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+        
+        {pendingFiles.length > 0 && (
+          <div className="pending-files">
+            {pendingFiles.map((file, index) => (
+              <div key={index} className="pending-file-item">
+                <span className="file-name">{file.name}</span>
+                <Button
+                  type="text"
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleRemoveFile(index)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
