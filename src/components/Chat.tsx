@@ -1,17 +1,69 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Input, Button, Avatar, Spin } from 'antd';
+import { Input, Button, Avatar, Spin, Image } from 'antd';
 import { SendOutlined, UserOutlined, RobotOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import type { Message } from '../types/chat';
 import './Chat.css';
+import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf';
+// 设置 PDF.js worker 路径为 public 目录下的 pdf.worker.min.js，避免 CDN 依赖和加载失败
+if (pdfjs.GlobalWorkerOptions.workerSrc !== '/pdf.worker.min.js') {
+  pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+}
+
+interface FileMessage {
+  type: 'file';
+  fileType: 'pdf' | 'mp3' | 'other';
+  url: string;
+  fileName: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+interface ImageMessage {
+  type: 'image';
+  url: string;
+  alt?: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+interface TextMessage {
+  type: 'text';
+  content: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+interface VideoMessage {
+  type: 'video';
+  url: string;
+  fileName: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+interface OfficeMessage {
+  type: 'office';
+  fileType: 'doc' | 'xls' | 'ppt';
+  url: string;
+  fileName: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+interface LinkCardMessage {
+  type: 'link';
+  url: string;
+  title: string;
+  description?: string;
+  image?: string;
+  timestamp: string;
+  from?: 'user' | 'ai';
+}
+type CustomMessage = TextMessage | ImageMessage | FileMessage | VideoMessage | OfficeMessage | LinkCardMessage;
 
 interface ChatProps {
-  initialMessages: Message[];
+  initialMessages: CustomMessage[];
   onSendMessage: (message: string) => Promise<void>;
 }
 
 const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<CustomMessage[]>(initialMessages);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,10 +97,11 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
-    const userMessage: Message = {
-      type: 'user',
+    const userMessage: TextMessage = {
+      type: 'text',
       content: inputValue.trim(),
       timestamp: new Date().toLocaleTimeString(),
+      from: 'user',
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -59,10 +112,11 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
       await onSendMessage(inputValue);
       
       // 模拟AI回复
-      const aiMessage: Message = {
-        type: 'ai',
+      const aiMessage: TextMessage = {
+        type: 'text',
         content: '收到您的需求，请稍等',
         timestamp: new Date().toLocaleTimeString(),
+        from: 'ai',
       };
       
       setTimeout(() => {
@@ -82,6 +136,110 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
     }
   };
 
+  // 消息类型小组件
+  const TextMessageView = ({ message }: { message: TextMessage }) => (
+    <ReactMarkdown>{message.content}</ReactMarkdown>
+  );
+  const ImageMessageView = ({ message }: { message: ImageMessage }) => (
+    <Image
+      src={message.url}
+      alt={message.alt || '图片'}
+      style={{ maxWidth: 180, maxHeight: 120, borderRadius: 4, cursor: 'pointer' }}
+      preview={{ mask: '点击预览' }}
+      fallback="/img/placeholder.png"
+    />
+  );
+  const FileMessageView = ({ message }: { message: FileMessage }) => {
+    if (message.fileType === 'pdf') {
+      return (
+        <div style={{ width: 220 }}>
+          <div style={{ fontSize: 13, marginBottom: 4 }}>
+            <span role="img" aria-label="pdf" style={{ marginRight: 4 }}>📄</span>
+            {message.fileName}
+          </div>
+          <a href={message.url} download target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
+            下载
+          </a>
+        </div>
+      );
+    }
+    if (message.fileType === 'mp3') {
+      return (
+        <div style={{ width: 180 }}>
+          <div style={{ fontSize: 13, marginBottom: 4 }}>
+            <span role="img" aria-label="mp3" style={{ marginRight: 4 }}>🎵</span>
+            {message.fileName}
+          </div>
+          <audio controls style={{ width: 180 }}>
+            <source src={message.url} type="audio/mpeg" />
+            您的浏览器不支持音频播放。
+          </audio>
+          <a href={message.url} download target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
+            下载
+          </a>
+        </div>
+      );
+    }
+    return (
+      <div style={{ width: 180 }}>
+        <div style={{ fontSize: 13, marginBottom: 4 }}>
+          <span role="img" aria-label="file" style={{ marginRight: 4 }}>📎</span>
+          {message.fileName}
+        </div>
+        <a href={message.url} download target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
+          下载
+        </a>
+      </div>
+    );
+  };
+  const VideoMessageView = ({ message }: { message: VideoMessage }) => (
+    <div style={{ width: 180 }}>
+      <div style={{ fontSize: 13, marginBottom: 4 }}>
+        <span role="img" aria-label="video" style={{ marginRight: 4 }}>🎬</span>
+        {message.fileName}
+      </div>
+      <video controls style={{ width: 180 }}>
+        <source src={message.url} type="video/mp4" />
+        您的浏览器不支持视频播放。
+      </video>
+      <a href={message.url} download target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
+        下载
+      </a>
+    </div>
+  );
+  const OfficeMessageView = ({ message }: { message: OfficeMessage }) => (
+    <div style={{ width: 220 }}>
+      <div style={{ fontSize: 13, marginBottom: 4 }}>
+        <span role="img" aria-label={message.fileType} style={{ marginRight: 4 }}>📄</span>
+        {message.fileName}
+      </div>
+      <a href={message.url} download target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
+        下载
+      </a>
+    </div>
+  );
+  const LinkCardMessageView = ({ message }: { message: LinkCardMessage }) => (
+    <a href={message.url} target="_blank" rel="noopener noreferrer" className="link-card" style={{ display: 'flex', alignItems: 'center', width: 220, textDecoration: 'none', border: '1px solid #eee', borderRadius: 6, padding: 8, margin: '4px 0', background: '#fafbfc' }}>
+      {message.image && <img src={message.image} alt={message.title} style={{ width: 40, height: 40, marginRight: 8, borderRadius: 4 }} />}
+      <div>
+        <div style={{ fontWeight: 600, color: '#333' }}>{message.title}</div>
+        <div style={{ fontSize: 12, color: '#888' }}>{message.description}</div>
+      </div>
+    </a>
+  );
+
+  function renderMessageContent(message: CustomMessage) {
+    switch (message.type) {
+      case 'text': return <TextMessageView message={message} />;
+      case 'image': return <ImageMessageView message={message} />;
+      case 'file': return <FileMessageView message={message} />;
+      case 'video': return <VideoMessageView message={message} />;
+      case 'office': return <OfficeMessageView message={message} />;
+      case 'link': return <LinkCardMessageView message={message} />;
+      default: return null;
+    }
+  }
+
   return (
     <div className="chat-container">
       <div className="chat-header">
@@ -95,17 +253,17 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`message-wrapper ${message.type === 'user' ? 'user' : 'ai'}`}
+            className={`message-wrapper ${message.from === 'user' ? 'user' : 'ai'}`}
           >
             <div className="message-avatar">
               <Avatar
-                icon={message.type === 'user' ? <UserOutlined /> : <RobotOutlined />}
-                className={message.type === 'user' ? 'user-avatar' : 'ai-avatar'}
+                icon={message.from === 'user' ? <UserOutlined /> : <RobotOutlined />}
+                className={message.from === 'user' ? 'user-avatar' : 'ai-avatar'}
               />
             </div>
             <div className="message-content">
               <div className="message-bubble">
-                <ReactMarkdown>{message.content}</ReactMarkdown>
+                {renderMessageContent(message)}
               </div>
               <div className="message-timestamp">{message.timestamp}</div>
             </div>
@@ -148,4 +306,5 @@ const Chat: React.FC<ChatProps> = ({ initialMessages, onSendMessage }) => {
   );
 };
 
-export default Chat; 
+export default Chat;
+export type { CustomMessage }; 

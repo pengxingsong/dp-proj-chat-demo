@@ -15,6 +15,7 @@ import {
 import zhCN from 'antd/locale/zh_CN';
 import Chat from './components/Chat';
 import type { Message } from './types/chat';
+import type { CustomMessage } from './components/Chat';
 import FloatingCollapseButton from './components/FloatingCollapseButton';
 import './App.css';
 
@@ -24,7 +25,7 @@ const { Text } = Typography;
 interface SessionItem {
   id: string;
   name: string;
-  lastMessage: string;
+  lastMessage: { type: 'text' | 'image' | 'file'; content: string; fileName?: string };
   time: string;
   unread: number;
   status: 'online' | 'waiting';
@@ -47,29 +48,84 @@ const App: React.FC = () => {
     {
       id: '1',
       name: '裴先生',
-      lastMessage: '收到!您的需求，请稍等',
+      lastMessage: { type: 'text', content: '收到!您的需求，请稍等' },
       time: '16:18',
       unread: 0,
       status: 'waiting',
-      source: 'WAP | 晨光科力普办公用品'
+      source: 'WAP | 我要上天'
     },
     {
       id: '2',
       name: '李先生',
-      lastMessage: '您好，收到，请稍等！',
+      lastMessage: { type: 'image', content: 'https://via.placeholder.com/40x40.png?text=IMG' },
       time: '16:20',
       unread: 1,
       status: 'online',
-      source: 'WAP | 晨光科力普办公用品'
+      source: 'WAP | 我要上天'
     },
-    // 可以添加更多模拟会话
+    {
+      id: '3',
+      name: '李五',
+      lastMessage: { type: 'file', content: '', fileName: '合同.pdf' },
+      time: '16:22',
+      unread: 2,
+      status: 'online',
+      source: 'WAP | 我要上天'
+    },
   ];
 
-  const initialMessages: Message[] = [
+  const initialMessages: CustomMessage[] = [
     {
-      type: 'ai',
+      type: 'text',
       content: '您好！我是智能客服助手。请问有什么可以帮您？',
       timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'image',
+      url: '/content/img/image.jpg',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'file',
+      fileType: 'pdf',
+      url: '/content/file/[技术] MyBatis 3x.pdf',
+      fileName: '[技术] MyBatis 3x.pdf',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'file',
+      fileType: 'mp3',
+      url: '/content/file/huayao.mp3',
+      fileName: 'huayao.mp3',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'video',
+      url: '/content/file/test1.mp4',
+      fileName: 'test1.mp4',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'office',
+      fileType: 'doc',
+      url: '/content/file/test1.docx',
+      fileName: 'test1.docx',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
+    },
+    {
+      type: 'link',
+      url: 'https://www.baidu.com',
+      title: '百度',
+      description: '百度',
+      image: '/content/img/image.jpg',
+      timestamp: new Date().toLocaleTimeString(),
+      from: 'ai',
     },
   ];
 
@@ -152,7 +208,11 @@ const App: React.FC = () => {
         }
         description={
           <div className="session-desc">
-            <Text type="secondary" ellipsis>{item.lastMessage}</Text>
+            <Text type="secondary" ellipsis>
+              {item.lastMessage.type === 'text' && item.lastMessage.content}
+              {item.lastMessage.type === 'image' && '[图片]'}
+              {item.lastMessage.type === 'file' && `[文件] ${item.lastMessage.fileName}`}
+            </Text>
             <div className="session-source">{item.source}</div>
           </div>
         }
