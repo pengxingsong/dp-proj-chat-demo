@@ -4,7 +4,10 @@
 
 这是一个基于 React + TypeScript + Ant Design 的现代化聊天应用，采用了高级前端公司的标准架构设计。
 
-## 🏗️ 项目架构
+## 🏗️ 项目
+
+![项目图](./public/content/img/exp1.png)
+
 
 ### 📁 目录结构
 
