@@ -1,0 +1,153 @@
+.message-list-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.messages-container {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message-wrapper {
+  display: flex;
+  gap: 8px;
+  max-width: 85%;
+  align-items: flex-start;
+}
+
+.message-wrapper.user {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.message-wrapper.ai {
+  flex-direction: row;
+  align-self: flex-start;
+}
+
+.message-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.message-avatar .ant-avatar {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+.message-content {
+  flex: 1;
+  min-width: 0;
+  margin-top: 2px;
+}
+
+.message-wrapper.user .message-content .text-message {
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #e8e8e8;
+}
+
+.message-wrapper.ai .message-content .text-message {
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #e8e8e8;
+}
+
+/* 文件、视频、Office、链接消息在AI和用户消息中的样式保持一致 */
+.message-wrapper .message-content .file-message .file-content,
+.message-wrapper .message-content .video-message .video-content,
+.message-wrapper .message-content .office-message .office-content,
+.message-wrapper .message-content .link-message .ant-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #e8e8e8 !important;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  line-height: 1.2;
+  padding: 0 2px;
+}
+
+.message-wrapper.user .message-time {
+  text-align: right;
+}
+
+.message-wrapper.ai .message-time {
+  text-align: left;
+}
+
+.message-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #666;
+  max-width: fit-content;
+}
+
+.message-loading .ant-spin {
+  margin-right: 4px;
+}
+
+/* 滚动条样式优化 */
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .message-wrapper {
+    max-width: 90%;
+    gap: 6px;
+  }
+  
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .message-avatar .ant-avatar {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    font-size: 12px;
+  }
+  
+  .message-time {
+    font-size: 10px;
+  }
+} 

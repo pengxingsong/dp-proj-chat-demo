@@ -1,0 +1,57 @@
+.chat-info {
+  padding: 16px;
+}
+
+.chat-info-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #666;
+  font-size: 14px;
+}
+
+.chat-info-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
+.chat-info .ant-descriptions-item-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.chat-info .ant-descriptions-item-content {
+  font-size: 13px;
+}
+
+.message-count {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message-count span {
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .chat-info {
+    padding: 12px;
+  }
+  
+  .chat-info .ant-descriptions-item-label,
+  .chat-info .ant-descriptions-item-content {
+    font-size: 12px;
+  }
+  
+  .message-count span {
+    font-size: 12px;
+  }
+} 

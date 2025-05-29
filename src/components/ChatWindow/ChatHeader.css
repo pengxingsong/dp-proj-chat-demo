@@ -1,0 +1,101 @@
+.chat-header {
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.chat-header-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-header-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.chat-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.chat-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #52c41a;
+  box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.status-text {
+  font-size: 14px;
+  color: #262626;
+  font-weight: 500;
+}
+
+.header-action-btn {
+  color: #8c8c8c;
+  border: none;
+  padding: 4px 8px;
+  height: 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.header-action-btn:hover {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.header-action-btn:focus {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(82, 196, 26, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+  }
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 8px 12px;
+    min-height: 44px;
+  }
+  
+  .status-text {
+    font-size: 13px;
+  }
+  
+  .header-action-btn {
+    height: 28px;
+    width: 28px;
+  }
+} 

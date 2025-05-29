@@ -1,0 +1,43 @@
+.visitor-info {
+  padding: 16px;
+}
+
+.visitor-info-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #666;
+  font-size: 14px;
+}
+
+.visitor-info-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
+.visitor-info .ant-descriptions-item-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.visitor-info .ant-descriptions-item-content {
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .visitor-info {
+    padding: 12px;
+  }
+  
+  .visitor-info .ant-descriptions-item-label,
+  .visitor-info .ant-descriptions-item-content {
+    font-size: 12px;
+  }
+}

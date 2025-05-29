@@ -1,79 +1,75 @@
-import React from 'react';
-import { Tabs, List, Badge } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import React, { useEffect } from 'react';
+import { List, Tabs, Spin } from 'antd';
+import { useSessions } from '../hooks/useSessions';
+import SessionItem from './SessionList/SessionItem';
 import './SessionList.css';
 
 interface SessionListProps {
-  collapsed: boolean;
-  onCollapse: () => void;
+  onSessionSelect: (sessionId: string) => void;
+  selectedSessionId?: string | null;
 }
 
-interface SessionItem {
-  id: string;
-  title: string;
-  time: string;
-  description: string;
-  source: string;
-  unread: number;
-}
+const SessionList: React.FC<SessionListProps> = ({ onSessionSelect, selectedSessionId: externalSelectedSessionId }) => {
+  const { sessions, selectedSessionId: internalSelectedSessionId, isLoading, selectSession } = useSessions();
 
-const SessionList: React.FC<SessionListProps> = ({ collapsed, onCollapse }) => {
-  const sessions: SessionItem[] = [
-    {
-      id: '1',
-      title: '张三的咨询',
-      time: '10:30',
-      description: '关于产品使用的问题咨询',
-      source: '来自首页',
-      unread: 2,
-    },
-    {
-      id: '2',
-      title: '李四的咨询',
-      time: '11:20',
-      description: '售后服务相关问题',
-      source: '来自产品页',
-      unread: 0,
-    },
-  ];
+  // 同步外部选中状态到内部
+  useEffect(() => {
+    if (externalSelectedSessionId && externalSelectedSessionId !== internalSelectedSessionId) {
+      selectSession(externalSelectedSessionId);
+    }
+  }, [externalSelectedSessionId, internalSelectedSessionId, selectSession]);
+
+  // 使用外部传入的selectedSessionId，如果没有则使用内部状态
+  const currentSelectedSessionId = externalSelectedSessionId || internalSelectedSessionId;
+
+  const handleSessionSelect = (sessionId: string) => {
+    selectSession(sessionId);
+    onSessionSelect(sessionId);
+  };
 
   return (
-    <div className={`left-sider ${collapsed ? 'collapsed' : ''}`}>
-      <div className="collapse-trigger left-trigger" onClick={onCollapse}>
-        {collapsed ? <RightOutlined /> : <LeftOutlined />}
-      </div>
+    <div className="session-list-container">
       <div className="session-header">
         <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey="all"
+          size="small"
+          tabBarStyle={{ height: '40px', margin: 0 }}
           items={[
-            {
-              key: '1',
-              label: '全部会话',
+            { 
+              key: 'all', 
+              label: (
+                <span style={{ fontSize: '13px', lineHeight: '24px' }}>全部(16)</span>
+              )
             },
-            {
-              key: '2',
-              label: '未读会话',
+            { 
+              key: 'waiting', 
+              label: (
+                <span style={{ fontSize: '13px', lineHeight: '24px' }}>留言(0)</span>
+              )
             },
           ]}
         />
       </div>
+      
       <div className="session-list">
-        <List
-          dataSource={sessions}
-          renderItem={(item) => (
-            <div className="session-item">
-              <div className="session-title">
-                <span>{item.title}</span>
-                <span className="session-time">{item.time}</span>
-              </div>
-              <div className="session-desc">{item.description}</div>
-              <div className="session-source">{item.source}</div>
-              {item.unread > 0 && (
-                <Badge count={item.unread} style={{ marginTop: 8 }} />
-              )}
-            </div>
-          )}
-        />
+        {isLoading ? (
+          <div className="session-loading">
+            <Spin size="small" />
+            <span>加载中...</span>
+          </div>
+        ) : (
+          <List
+            dataSource={sessions}
+            renderItem={session => (
+              <SessionItem
+                key={session.id}
+                session={session}
+                isSelected={currentSelectedSessionId === session.id}
+                onSelect={handleSessionSelect}
+              />
+            )}
+          />
+        )}
       </div>
     </div>
   );

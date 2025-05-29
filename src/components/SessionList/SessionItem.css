@@ -1,0 +1,67 @@
+.session-item {
+  padding: 12px 16px !important;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.session-item:hover {
+  background-color: #f5f5f5;
+}
+
+.session-item.selected {
+  background-color: #e6f7ff;
+  border-right: 3px solid #1890ff;
+}
+
+.session-item.selected:hover {
+  background-color: #e6f7ff;
+}
+
+.session-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.session-time {
+  font-size: 12px !important;
+  margin-left: 8px;
+}
+
+.session-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-source {
+  font-size: 11px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+}
+
+.session-unread-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+@media (max-width: 768px) {
+  .session-item {
+    padding: 10px 12px !important;
+  }
+  
+  .session-time {
+    font-size: 11px !important;
+  }
+  
+  .session-source {
+    font-size: 10px;
+  }
+} 
