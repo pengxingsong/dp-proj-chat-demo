@@ -1,7 +1,14 @@
 .message-input-container {
+  flex-shrink: 0;
+  min-height: 56px;
   padding: 12px 16px;
   border-top: 1px solid #f0f0f0;
   background: #fff;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .pending-files {
@@ -149,6 +156,7 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
   .message-input-container {
+    min-height: 44px;
     padding: 8px 12px;
   }
   
