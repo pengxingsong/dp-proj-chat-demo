@@ -1,0 +1,41 @@
+.webchat-extend-info {
+  padding: 16px;
+}
+
+.webchat-extend-info-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #666;
+  font-size: 14px;
+}
+
+.webchat-extend-info-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
+.webchat-extend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .webchat-extend-info {
+    padding: 12px;
+  }
+  
+  .webchat-extend-item {
+    font-size: 12px;
+  }
+} 

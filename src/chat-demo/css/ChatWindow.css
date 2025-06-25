@@ -1,0 +1,32 @@
+.webchat-chat-window-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  min-height: 0;
+}
+
+/* 头部固定高度 */
+.webchat-chat-header {
+  flex-shrink: 0;
+}
+
+/* 消息列表占据剩余空间 */
+.webchat-message-list-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 输入区固定高度，不被压缩 */
+.webchat-message-input-container {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .webchat-message-input-container {
+    min-height: 44px;
+  }
+} 

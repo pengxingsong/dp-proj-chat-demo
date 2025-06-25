@@ -1,0 +1,43 @@
+.webchat-visitor-info {
+  padding: 16px;
+}
+
+.webchat-visitor-info-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px;
+  color: #666;
+  font-size: 14px;
+}
+
+.webchat-visitor-info-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
+.webchat-visitor-info .ant-descriptions-item-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.webchat-visitor-info .ant-descriptions-item-content {
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .webchat-visitor-info {
+    padding: 12px;
+  }
+  
+  .webchat-visitor-info .ant-descriptions-item-label,
+  .webchat-visitor-info .ant-descriptions-item-content {
+    font-size: 12px;
+  }
+}

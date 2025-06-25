@@ -1,0 +1,67 @@
+.webchat-session-item {
+  padding: 12px 16px !important;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.webchat-session-item:hover {
+  background-color: #f5f5f5;
+}
+
+.webchat-session-item.selected {
+  background-color: #e6f7ff;
+  border-right: 3px solid #1890ff;
+}
+
+.webchat-session-item.selected:hover {
+  background-color: #e6f7ff;
+}
+
+.webchat-session-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.webchat-session-time {
+  font-size: 12px !important;
+  margin-left: 8px;
+}
+
+.webchat-session-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.webchat-session-source {
+  font-size: 11px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+}
+
+.webchat-session-unread-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+@media (max-width: 768px) {
+  .webchat-session-item {
+    padding: 10px 12px !important;
+  }
+  
+  .webchat-session-time {
+    font-size: 11px !important;
+  }
+  
+  .webchat-session-source {
+    font-size: 10px;
+  }
+} 

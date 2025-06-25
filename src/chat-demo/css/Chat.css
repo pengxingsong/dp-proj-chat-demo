@@ -1,0 +1,375 @@
+/* 全局样式 */
+/* body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  min-width: 1024px;
+  min-height: 768px;
+}
+
+.App {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+} */
+
+.webchat-app-container {
+  height: 100vh;
+  background: #f0f2f5;
+  min-height: 768px;
+}
+
+/* 确保主内容区域正确分配高度 */
+.webchat-main-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* 左侧边栏样式 */
+.webchat-left-sider {
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  position: relative;
+  transition: all 0.2s;
+  min-height: 100%;
+  width: 280px !important;
+  max-width: 280px !important;
+}
+
+.webchat-left-sider.collapsed {
+  overflow: visible;
+}
+
+.webchat-left-sider .collapsed-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+  gap: 16px;
+}
+
+.webchat-session-header {
+  padding: 0 16px;
+  border-bottom: 1px solid #e8e8e8;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  background: #fff;
+}
+
+.webchat-session-header .ant-tabs {
+  height: 40px;
+}
+
+.webchat-session-header .ant-tabs-nav {
+  margin: 0;
+  height: 40px;
+}
+
+.webchat-session-header .ant-tabs-nav::before {
+  border: none;
+}
+
+.webchat-session-header .ant-tabs-tab {
+  padding: 8px 16px !important;
+  margin: 0 !important;
+  height: 40px;
+  line-height: 24px;
+}
+
+.webchat-session-list {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.webchat-session-item {
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 4px 8px;
+  border-radius: 4px;
+}
+
+.webchat-session-item:hover {
+  background-color: #f5f5f5;
+}
+
+.webchat-session-item.selected {
+  background-color: #e6f7ff;
+}
+
+.webchat-session-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.webchat-session-time {
+  font-size: 12px;
+  margin-left: 16px;
+}
+
+.webchat-session-desc {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.5;
+}
+
+.webchat-session-source {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 中间内容区域样式 */
+.webchat-chat-content {
+  background: #fff;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+  min-width: 480px;
+  flex: 1;
+}
+
+/* 右侧边栏样式 */
+.webchat-right-sider {
+  background: #fff;
+  border-left: 1px solid #e8e8e8;
+  padding: 12px;
+  position: relative;
+  transition: all 0.2s;
+  min-width: 280px;
+  max-width: 280px !important;
+}
+
+.webchat-right-sider.collapsed {
+  padding: 0;
+  min-width: 0;
+  overflow: visible;
+}
+
+.webchat-right-sider .ant-tabs {
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.webchat-right-sider.collapsed .ant-tabs {
+  opacity: 0;
+}
+
+.webchat-right-sider .ant-tabs-content {
+  height: calc(100vh - 40px);
+  padding: 16px;
+}
+
+.webchat-right-sider .ant-tabs-nav {
+  margin: 0;
+  padding: 0 16px;
+  height: 40px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fff;
+}
+
+.webchat-right-sider .ant-tabs-nav-wrap {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.webchat-right-sider .ant-tabs-tab {
+  padding: 8px 16px !important;
+  margin: 0 !important;
+  height: 40px;
+  line-height: 24px;
+  min-width: 90px !important;
+  box-sizing: border-box;
+}
+
+.webchat-right-sider .ant-tabs-nav::before {
+  border: none;
+}
+
+.webchat-visitor-info,
+.webchat-chat-info,
+.webchat-extend-info {
+  padding: 16px 8px;
+}
+
+.webchat-message-count {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.webchat-extend-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+/* 描述列表样式优化 */
+.webchat-right-sider .ant-descriptions-item {
+  padding-bottom: 16px;
+}
+
+.webchat-right-sider .ant-descriptions-item-label {
+  color: #666;
+  padding-right: 16px;
+}
+
+.webchat-right-sider .ant-descriptions-item-content {
+  color: #333;
+}
+
+/* 标签页样式优化 */
+.webchat-right-sider .ant-tabs-tab {
+  padding: 12px 24px !important;
+  margin: 0 !important;
+}
+
+.webchat-right-sider .ant-tabs-tab .anticon {
+  margin-right: 8px;
+}
+
+.webchat-right-sider .ant-list-item {
+  padding: 12px 8px;
+  margin: 4px 0;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.webchat-right-sider .ant-list-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* 折叠触发器样式 */
+.webchat-collapse-trigger {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 0 4px 4px 0;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.webchat-collapse-trigger:hover {
+  background: #f5f5f5;
+  color: #1890ff;
+}
+
+.webchat-left-trigger {
+  right: -24px;
+}
+
+.webchat-right-trigger {
+  left: -24px;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 1400px) {
+  .webchat-right-sider {
+    width: 30% !important;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  /* .webchat-right-sider {
+    display: none;
+  } */
+  .webchat-chat-content {
+    min-width: 480px;
+  }
+  .webchat-left-sider {
+    min-width: 280px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .webchat-right-sider {
+    min-width: 240px;
+    max-width: 240px !important;
+  }
+  
+  .webchat-chat-content {
+    min-width: 400px;
+  }
+  
+  .webchat-left-sider {
+    width: 240px !important;
+    max-width: 240px !important;
+  }
+  
+  .webchat-session-item {
+    padding: 12px 16px;
+  }
+  
+  .webchat-visitor-info,
+  .webchat-chat-info,
+  .webchat-extend-info {
+    padding: 12px 4px;
+  }
+  
+  .webchat-right-sider .ant-descriptions-item {
+    padding-bottom: 12px;
+  }
+}
+
+/* 滚动条样式优化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.webchat-dragger {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background 0.2s;
+}
+.webchat-dragger:hover {
+  background: #e6f7ff;
+} 
+
+
+/*重置一些原始样式*/
+.webchat-info-panel-container .easyui-tabs-nav,
+.webchat-session-list-container .easyui-tabs-nav {
+  border: none;
+  background-color:#ffffff;
+}

@@ -1,0 +1,22 @@
+.webchat-info-panel-container {
+  height: 100%;
+  background: #fff;
+}
+
+.webchat-info-panel-container .ant-tabs {
+  height: 100%;
+}
+
+.webchat-info-panel-container .ant-tabs-content-holder {
+  overflow-y: auto;
+}
+
+.webchat-info-panel-container .ant-tabs-tab {
+  padding: 8px 12px !important;
+}
+
+@media (max-width: 768px) {
+  .webchat-info-panel-container .ant-tabs-tab {
+    padding: 6px 8px !important;
+  }
+} 
